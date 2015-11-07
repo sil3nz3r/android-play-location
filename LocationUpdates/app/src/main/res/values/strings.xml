@@ -27,4 +27,7 @@
     <string name="last_update_time_label">Last location update time: </string>
 
     <string name="location_updated_message">Location updated</string>
+    <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">
+        AIzaSyBm-rUlU0HYVGFiozfm4PorZU_O4LhaEOA
+    </string>
 </resources>

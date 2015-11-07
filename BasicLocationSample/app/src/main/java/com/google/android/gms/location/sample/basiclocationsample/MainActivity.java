@@ -18,6 +18,7 @@ package com.google.android.gms.location.sample.basiclocationsample;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.widget.TextView;
@@ -28,6 +29,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Location sample.
@@ -37,8 +44,8 @@ import com.google.android.gms.location.LocationServices;
  * See https://github.com/googlesamples/android-google-accounts/tree/master/QuickStart if you are
  * also using APIs that need authentication.
  */
-public class MainActivity extends ActionBarActivity implements
-        ConnectionCallbacks, OnConnectionFailedListener {
+public class MainActivity extends FragmentActivity implements
+        ConnectionCallbacks, OnConnectionFailedListener, OnMapReadyCallback {
 
     protected static final String TAG = "MainActivity";
 
@@ -54,6 +61,7 @@ public class MainActivity extends ActionBarActivity implements
 
     protected TextView mLatitudeText;
     protected TextView mLongitudeText;
+    private GoogleMap mMap;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,6 +70,10 @@ public class MainActivity extends ActionBarActivity implements
 
         mLatitudeText = (TextView) findViewById((R.id.latitude_text));
         mLongitudeText = (TextView) findViewById((R.id.longitude_text));
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         buildGoogleApiClient();
     }
@@ -104,6 +116,11 @@ public class MainActivity extends ActionBarActivity implements
         if (mLastLocation != null) {
             mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
             mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
+
+            LatLng KansasCity = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            mMap.addMarker(new MarkerOptions().position(KansasCity).title("Marker in KCMO"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(KansasCity));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(KansasCity, 15));
         } else {
             Toast.makeText(this, R.string.no_location_detected, Toast.LENGTH_LONG).show();
         }
@@ -123,5 +140,12 @@ public class MainActivity extends ActionBarActivity implements
         // attempt to re-establish the connection.
         Log.i(TAG, "Connection suspended");
         mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+
     }
 }
